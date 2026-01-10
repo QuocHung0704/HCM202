@@ -20,3 +20,24 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: gemma3:12b
+          temperature: 0.7
+
+    retry:
+      max-attempts: 1
+
+
+#  # Nếu bạn dùng PGVector sau này, hãy bỏ comment và chỉnh thụt lề như sau:
+#  vectorstore:
+#    pgvector:
+#      index-type: HNSW
+#      dimensions: 1536
+#      initialize-schema: true
+#      table-name: hcm202_vector
+#      distance-type: cosine_distance
