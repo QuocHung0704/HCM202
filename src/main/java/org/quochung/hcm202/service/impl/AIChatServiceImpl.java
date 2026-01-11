@@ -7,6 +7,7 @@ import org.quochung.hcm202.repository.AIChatHistoryRepository;
 import org.quochung.hcm202.service.AIChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,6 @@ public class AIChatServiceImpl implements AIChatService {
                 .call()
                 .content();
 
-        // 3. Lưu dữ liệu chat vào ChatHistory
         AIChatHistory history = AIChatHistory.builder()
                 .ipAddress(ipAddress)
                 .userMessage(request.message())
@@ -66,7 +66,20 @@ public class AIChatServiceImpl implements AIChatService {
 
     @Override
     public void ingestData(String content) {
-        Document doc = new Document(content);
-        vectorStore.add(List.of(doc));
+        if (content == null || content.isBlank()) return;
+
+        // 1. Loại bỏ ký tự Null (0x00) để tránh lỗi PSQLException
+        String sanitizedContent = content.replace("\u0000", "");
+
+        // 2. Tạo Document từ nội dung đã làm sạch
+        Document fullDoc = new Document(sanitizedContent);
+
+        // 3. Chia nhỏ văn bản để tránh lỗi vượt quá giới hạn Token
+        // TokenTextSplitter giúp cắt file lớn thành các đoạn nhỏ có nghĩa
+        TokenTextSplitter splitter = new TokenTextSplitter();
+        List<Document> chunks = splitter.split(List.of(fullDoc));
+
+        // 4. Lưu danh sách các đoạn nhỏ vào Vector Store (bảng hcm202_vector)
+        vectorStore.add(chunks);
     }
 }
