@@ -1,14 +1,14 @@
 package org.quochung.hcm202.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.quochung.hcm202.dto.request.ChatRequest;
 import org.quochung.hcm202.service.AIChatService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -26,9 +26,10 @@ public class AIController {
         return chatService.chat(request, ipAddress);
     }
 
-    @PostMapping("ingest")
-    public String ingest(@RequestBody String content) {
+    @PostMapping(value = "/ingest", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String ingest(@RequestParam("file") MultipartFile file) throws IOException {
+        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
         chatService.ingestData(content);
-        return "Đã nạp tài liệu vào bộ nhớ AI thành công";
+        return "Đã nạp tài liệu từ file " + file.getOriginalFilename() + " thành công";
     }
 }
