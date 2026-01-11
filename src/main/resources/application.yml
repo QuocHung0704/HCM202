@@ -23,10 +23,10 @@ spring:
 
   ai:
     ollama:
-      base-url: http://localhost:11434
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
         options:
-          model: gemma2:2b
+          model: ${OLLAMA_MODEL:gemma2:2b}
           temperature: 0.4
 
     retry:
@@ -38,3 +38,4 @@ spring:
         dimensions: 1024
         initialize-schema: true
         table-name: hcm202_vector
+
