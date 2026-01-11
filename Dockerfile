@@ -1,6 +1,6 @@
 # Bước 1: Build ứng dụng
 FROM maven:3.9.6-eclipse-temurin-21 AS build
-COPY . .
+COPY src/main/java .
 RUN mvn clean package -DskipTests
 
 # Bước 2: Chạy ứng dụng
