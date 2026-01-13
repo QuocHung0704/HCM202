@@ -33,6 +33,7 @@ public class AIChatServiceImpl implements AIChatService {
                 SearchRequest.builder()
                         .query(request.message())
                         .topK(2)
+//                        .similarityThreshold(0.7)
                         .build());
 
         String context = similarDocuments.stream()
@@ -40,13 +41,13 @@ public class AIChatServiceImpl implements AIChatService {
                 .collect(Collectors.joining("\n"));
 
         String aiResponse = chatClient.prompt()
-                .system(s -> s.text("Bạn là một chuyên gia hỗ trợ học tập môn Tư tưởng Hồ Chí Minh. " +
-                                "NHIỆM VỤ QUAN TRỌNG: " +
-                                "1. CHỈ sử dụng ngữ cảnh được cung cấp dưới đây để trả lời câu hỏi. " +
-                                "2. Nếu câu hỏi không liên quan đến Tư tưởng Hồ Chí Minh hoặc ngữ cảnh không có thông tin, " +
-                                "hãy lịch sự trả lời: 'Xin lỗi, tôi chỉ hỗ trợ các kiến thức liên quan đến môn Tư tưởng Hồ Chí Minh.' " +
-                                "3. Tuyệt đối không trả lời bất kỳ chủ đề ngoại lai nào khác.\n\n" +
-                                "Ngữ cảnh: {context}")
+                .system(s -> s.text("Bạn là chuyên gia hỗ trợ học tập môn Tư tưởng Hồ Chí Minh.\n" +
+                                "QUY TẮC TRẢ LỜI CỰC KỲ NGHIÊM NGẶT:\n" +
+                                "1. CHỈ sử dụng thông tin từ 'Ngữ cảnh' dưới đây để trả lời.\n" +
+                                "2. Nếu câu hỏi KHÔNG có trong 'Ngữ cảnh' hoặc 'Ngữ cảnh' trống, hãy trả lời chính xác câu: 'Xin lỗi, tôi không tìm thấy thông tin này trong tài liệu học tập môn Tư tưởng Hồ Chí Minh.'\n" +
+                                "3. Tuyệt đối không sử dụng kiến thức bên ngoài hoặc kiến thức chung của bạn.\n" +
+                                "4. Không trả lời các chủ đề khác ngoài Tư tưởng Hồ Chí Minh.\n\n" +
+                                "Ngữ cảnh:\n{context}")
                         .param("context", context))
                 .user(request.message())
                 .call()
@@ -67,19 +68,13 @@ public class AIChatServiceImpl implements AIChatService {
     @Override
     public void ingestData(String content) {
         if (content == null || content.isBlank()) return;
-
-        // 1. Loại bỏ ký tự Null (0x00) để tránh lỗi PSQLException
         String sanitizedContent = content.replace("\u0000", "");
 
-        // 2. Tạo Document từ nội dung đã làm sạch
         Document fullDoc = new Document(sanitizedContent);
 
-        // 3. Chia nhỏ văn bản để tránh lỗi vượt quá giới hạn Token
         // TokenTextSplitter giúp cắt file lớn thành các đoạn nhỏ có nghĩa
         TokenTextSplitter splitter = new TokenTextSplitter();
         List<Document> chunks = splitter.split(List.of(fullDoc));
-
-        // 4. Lưu danh sách các đoạn nhỏ vào Vector Store (bảng hcm202_vector)
         vectorStore.add(chunks);
     }
 }
