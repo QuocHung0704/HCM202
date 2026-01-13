@@ -36,7 +36,7 @@ spring:
 
   ai:
     ollama:
-      base-url: ${OLLAMA_BASE_URL:http://host.docker.internal:11434}
+      base-url: ${OLLAMA_BASE_URL:https://protozoological-nonrateably-elena.ngrok-free.dev}
       chat:
         options:
           model: ${OLLAMA_MODEL:gemma2:2b}
