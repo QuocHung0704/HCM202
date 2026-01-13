@@ -11,9 +11,9 @@ spring:
 #    password: ${DB_PASSWORD:123456}
 #    driver-class-name: org.postgresql.Driver
 
-    url: jdbc:postgresql://dpg-d5igfbp5pdvs73c173ig-a.singapore-postgres.render.com/hcm202
-    username: hcm202_user
-    password: qYj08hG0XMSiBfn8q4givoPfGaSpJyAB
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://dpg-d5igfbp5pdvs73c173ig-a.singapore-postgres.render.com/hcm202}
+    username: ${SPRING_DATASOURCE_USERNAME:hcm202_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:qYj08hG0XMSiBfn8q4givoPfGaSpJyAB}
     driver-class-name: org.postgresql.Driver
 
   jpa:
