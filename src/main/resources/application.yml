@@ -26,9 +26,17 @@ spring:
       hibernate:
         format_sql: true
 
+#  ai:
+#    ollama:
+#      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+#      chat:
+#        options:
+#          model: ${OLLAMA_MODEL:gemma2:2b}
+#          temperature: 0.4
+
   ai:
     ollama:
-      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      base-url: ${OLLAMA_BASE_URL:http://host.docker.internal:11434}
       chat:
         options:
           model: ${OLLAMA_MODEL:gemma2:2b}
