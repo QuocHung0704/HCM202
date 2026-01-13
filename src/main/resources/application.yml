@@ -6,15 +6,15 @@ spring:
     name: ${APPLICATION_NAME:hcm202}
 
   datasource:
-#    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:hcm202}?options=-c%20timezone=UTC
-#    username: ${DB_USER:postgres}
-#    password: ${DB_PASSWORD:123456}
-#    driver-class-name: org.postgresql.Driver
-
-    url: jdbc:postgresql://dpg-d5igfbp5pdvs73c173ig-a.singapore-postgres.render.com/hcm202
-    username: hcm202_user
-    password: qYj08hG0XMSiBfn8q4givoPfGaSpJyAB
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:hcm202}?options=-c%20timezone=UTC
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:123456}
     driver-class-name: org.postgresql.Driver
+
+#    url: jdbc:postgresql://dpg-d5igfbp5pdvs73c173ig-a.singapore-postgres.render.com/hcm202
+#    username: hcm202_user
+#    password: qYj08hG0XMSiBfn8q4givoPfGaSpJyAB
+#    driver-class-name: org.postgresql.Driver
 
   jpa:
     database: POSTGRESQL

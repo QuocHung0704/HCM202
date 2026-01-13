@@ -2,6 +2,8 @@ package org.quochung.hcm202.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.quochung.hcm202.dto.request.ChatRequest;
 import org.quochung.hcm202.service.AIChatService;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,25 @@ public class AIController {
 
     @PostMapping(value = "/ingest", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public String ingest(@RequestParam("file") MultipartFile file) throws IOException {
-        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+        String fileName = file.getOriginalFilename();
+        String content = "";
+
+        if (fileName != null && fileName.endsWith(".docx")) {
+            // Xử lý tệp Word (.docx) bằng Apache POI
+            try (XWPFDocument doc = new XWPFDocument(file.getInputStream())) {
+                XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+                content = extractor.getText();
+            }
+        } else {
+            // Xử lý tệp văn bản thuần túy (.txt)
+            content = new String(file.getBytes(), StandardCharsets.UTF_8);
+        }
+
+        if (content.isBlank()) {
+            return "Tệp trống hoặc không thể đọc nội dung.";
+        }
+
         chatService.ingestData(content);
-        return "Đã nạp tài liệu từ file " + file.getOriginalFilename() + " thành công";
+        return "Đã nạp tài liệu từ file " + fileName + " thành công";
     }
 }
