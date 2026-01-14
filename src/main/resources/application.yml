@@ -41,6 +41,9 @@ spring:
         options:
           model: ${OLLAMA_MODEL:gemma2:2b}
           temperature: 0.4
+      embedding:
+        options:
+          model: mxbai-embed-large
 
     retry:
       max-attempts: 1
