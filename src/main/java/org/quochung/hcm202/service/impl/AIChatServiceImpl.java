@@ -6,6 +6,7 @@ import org.quochung.hcm202.entity.AIChatHistory;
 import org.quochung.hcm202.repository.AIChatHistoryRepository;
 import org.quochung.hcm202.service.AIChatService;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +25,9 @@ public class AIChatServiceImpl implements AIChatService {
     private final AIChatHistoryRepository chatHistoryRepository;
 
     public AIChatServiceImpl(ChatClient.Builder builder, PgVectorStore vectorStore, AIChatHistoryRepository chatHistoryRepository) {
-        chatClient = builder.build();
+        // Khởi tạo builder cơ bản, header sẽ được xử lý ở mỗi lần gọi chat()
+        // hoặc thông qua cấu hình bean của ChatClient.Builder
+        this.chatClient = builder.build();
         this.vectorStore = vectorStore;
         this.chatHistoryRepository = chatHistoryRepository;
     }
@@ -41,6 +45,9 @@ public class AIChatServiceImpl implements AIChatService {
                 .collect(Collectors.joining("\n"));
 
         String aiResponse = chatClient.prompt()
+                .options(ChatOptions.builder().build())
+                .advisors(advisorSpec -> advisorSpec
+                        .param("headers", Map.of("ngrok-skip-browser-warning", "true")))
                 .system(s -> s.text("Bạn là chuyên gia hỗ trợ học tập môn Tư tưởng Hồ Chí Minh.\n" +
                                 "QUY TẮC TRẢ LỜI CỰC KỲ NGHIÊM NGẶT:\n" +
                                 "1. CHỈ sử dụng thông tin từ 'Ngữ cảnh' dưới đây để trả lời.\n" +
