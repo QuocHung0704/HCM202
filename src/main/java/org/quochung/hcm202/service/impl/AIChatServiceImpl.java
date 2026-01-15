@@ -36,7 +36,7 @@ public class AIChatServiceImpl implements AIChatService {
         List<Document> similarDocuments = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(request.message())
-                        .topK(2)
+                        .topK(5)
 //                        .similarityThreshold(0.7)
                         .build());
 
