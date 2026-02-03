@@ -1,2 +1,1 @@
-streak
-test AI
+test AI training model
